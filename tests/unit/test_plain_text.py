@@ -1,6 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch
-from plain import find_closing_brace, parse_text, strip_down
+from hoi4.plain import find_closing_brace, parse_text, strip_down
 
 class StripDownTests(TestCase):
 
@@ -40,7 +40,7 @@ class TextParsingTests(TestCase):
         })
     
 
-    @patch("plain.find_closing_brace")
+    @patch("hoi4.plain.find_closing_brace")
     def test_can_parse_text_with_braces_section(self, mock_find):
         text = 'hoi4 player="ENG" values={ 1=2 3=4 } session=658'
         mock_find.return_value = 35

@@ -52,16 +52,3 @@ def parse_text(text):
             if not list_mode: d[key] = word
         loc += 1
     return l if list_mode else d
-
-
-
-if __name__ == "__main__":
-    with open("autosave_plain.hoi4") as f:
-        data = f.read()
-
-    data = strip_down(data)
-    d = parse_text(data)
-    import json
-    with open("autosave_plain.json", "w") as f:
-        json.dump(d, f, indent=4)
-

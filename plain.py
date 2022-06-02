@@ -3,14 +3,18 @@ def strip_down(text):
 
 
 def find_closing_brace(text, start):
+    """Given a block of text and the location of an opening '{' within it, this
+    function will return the position of the corresponding closing '}'."""
+    
     assert text[start] == "{"
     level = 1
     for index, char in enumerate(text[start + 1:]):
         if char == "{": level += 1
         if char == "}": level -= 1
         if level == 0:
-            return start + index
-    raise Exception("Brace section never ended")
+            return start + index + 1
+    raise ValueError("Brace section never ended")
+
 
 def parse_text(text):
     loc = 0
@@ -50,10 +54,11 @@ def parse_text(text):
 
 
 
-with open("autosave_plain.hoi4") as f:
-    data = f.read()
+if __name__ == "__main__":
+    with open("autosave_plain.hoi4") as f:
+        data = f.read()
 
-data = strip_down(data)
-d = parse_text(data)
-print(d)
+    data = strip_down(data)
+    d = parse_text(data)
+    print(d)
 

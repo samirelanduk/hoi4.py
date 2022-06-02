@@ -1,3 +1,14 @@
+"""Functions for parsing plain text .hoi4 files."""
+
+def load_as_dict(path):
+    """Opens a .hoi4 file and parses it as a Python dictionary."""
+
+    with open(path) as f:
+        data = f.read()
+    data = strip_down(data)
+    return parse_text(data)
+
+
 def strip_down(text):
     """Removes line breaks, and reduces all consecutive spaces to a single
     space."""

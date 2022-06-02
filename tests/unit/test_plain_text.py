@@ -1,6 +1,20 @@
 from unittest import TestCase
 from unittest.mock import patch
-from hoi4.plain import find_closing_brace, parse_text, strip_down
+from hoi4.plain import find_closing_brace, load_as_dict, parse_text, strip_down
+
+class LoadAsDictTests(TestCase):
+
+    @patch("builtins.open")
+    @patch("hoi4.plain.strip_down")
+    @patch("hoi4.plain.parse_text")
+    def test_can_load_as_dict(self, mock_parse, mock_strip, mock_open):
+        d = load_as_dict("/path/to/file")
+        mock_open.assert_called_with("/path/to/file")
+        mock_strip.assert_called_with(mock_open.return_value.__enter__.return_value.read.return_value)
+        mock_parse.assert_called_with(mock_strip.return_value)
+        self.assertIs(d, mock_parse.return_value)
+
+
 
 class StripDownTests(TestCase):
 

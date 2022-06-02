@@ -22,9 +22,12 @@ def find_closing_brace(text, start):
 def parse_text(text):
     """Takes a block of text representing all or part of a HoI4 save file, and
     turns it into a Python dictionary. When it encounters sections enclosed by
-    curly braces, it will call itself recursively on that section."""
+    curly braces, it will call itself recursively on that section. If the text
+    represents an array of values rather than a mapping, it will return a list
+    instead."""
 
-    loc, word, key, in_string, d = 0, "", "", False, {}
+    loc, word, key, in_string, d, l = 0, "", "", False, {}, []
+    list_mode = "=" not in text
     while loc < len(text):
         char = text[loc]
         if char == '"':
@@ -33,19 +36,22 @@ def parse_text(text):
             key = word
             word = ""
         elif char == " " and not in_string:
-            if key: d[key] = word
+            if list_mode and word: l.append(word)
+            if key and not list_mode: d[key] = word
             word = ""
         elif char == "{":
             end = find_closing_brace(text, loc)
             brace_section = text[loc + 1:end - 1]
-            d[key] = parse_text(brace_section)
+            if not list_mode: d[key] = parse_text(brace_section)
+            if list_mode: l.append(parse_text(brace_section))
             loc, key, word = end, "", ""
         else:
             word += char
-        if loc == len(text) - 1 and key and word:
-            d[key] = word
+        if loc == len(text) - 1 and (key or list_mode) and word:
+            if list_mode: l.append(word)
+            if not list_mode: d[key] = word
         loc += 1
-    return d
+    return l if list_mode else d
 
 
 

@@ -48,3 +48,8 @@ class TextParsingTests(TestCase):
             "player": "ENG", "values": {"1": "2", "3": "4"}, "session": "658"
         })
         mock_find.assert_called_with(text, 25)
+    
+
+    def test_can_parse_lists_of_values_structure(self):
+        text = ' xyz value1 "value 2'
+        self.assertEqual(parse_text(text), ["xyz", "value1", "value 2"])

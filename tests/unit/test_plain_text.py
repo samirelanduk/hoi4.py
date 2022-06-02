@@ -1,5 +1,6 @@
 from unittest import TestCase
-from plain import find_closing_brace, strip_down
+from unittest.mock import patch
+from plain import find_closing_brace, parse_text, strip_down
 
 class StripDownTests(TestCase):
 
@@ -27,3 +28,23 @@ class EndBraceFindingTests(TestCase):
             find_closing_brace(text, 5)
         with self.assertRaises(AssertionError):
            find_closing_brace(text, 11)
+
+
+
+class TextParsingTests(TestCase):
+
+    def test_can_parse_flat_structure(self):
+        text = 'hoi4 player="ENG" ideology=democratic session=658'
+        self.assertEqual(parse_text(text), {
+            "player": "ENG", "ideology": "democratic", "session": "658"
+        })
+    
+
+    @patch("plain.find_closing_brace")
+    def test_can_parse_text_with_braces_section(self, mock_find):
+        text = 'hoi4 player="ENG" values={ 1=2 3=4 } session=658'
+        mock_find.return_value = 35
+        self.assertEqual(parse_text(text), {
+            "player": "ENG", "values": {"1": "2", "3": "4"}, "session": "658"
+        })
+        mock_find.assert_called_with(text, 25)

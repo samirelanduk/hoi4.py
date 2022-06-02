@@ -1,6 +1,13 @@
 from unittest import TestCase
+from plain import find_closing_brace, strip_down
 
-from plain import find_closing_brace
+class StripDownTests(TestCase):
+
+    def test_can_strip_down(self):
+        text = "hoi4\na = b\n    c  = d e={  f g h}"
+        self.assertEqual(strip_down(text), "hoi4 a = b c = d e={ f g h}")
+
+
 
 class EndBraceFindingTests(TestCase):
 

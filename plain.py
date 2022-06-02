@@ -1,11 +1,14 @@
 def strip_down(text):
+    """Removes line breaks, and reduces all consecutive spaces to a single
+    space."""
+
     return  " ".join(text.replace("\n", " ").split()).strip()
 
 
 def find_closing_brace(text, start):
     """Given a block of text and the location of an opening '{' within it, this
     function will return the position of the corresponding closing '}'."""
-    
+
     assert text[start] == "{"
     level = 1
     for index, char in enumerate(text[start + 1:]):
@@ -24,8 +27,6 @@ def parse_text(text):
     d = {}
     while loc < len(text):
         char = text[loc]
-        #print("Character is", char)
-
         if char == '"':
             in_string = not in_string
 
@@ -41,7 +42,7 @@ def parse_text(text):
         elif char == "{":
             end = find_closing_brace(text, loc)
             brace_section = text[loc + 1:end - 1]
-            d[key] = len(brace_section)
+            d[key] = parse_text(brace_section)
             loc = end
             key = ""
             word = ""
@@ -60,5 +61,7 @@ if __name__ == "__main__":
 
     data = strip_down(data)
     d = parse_text(data)
-    print(d)
+    import json
+    with open("autosave_plain.json", "w") as f:
+        json.dump(d, f, indent=4)
 

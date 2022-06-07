@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from struct import unpack
 from hoi4.data import TOKENS
 
-def binary_hoi4_to_filestring(f):
+def parse_binary_hoi4(f):
     depth = 0
     sections = []
     while True:
@@ -18,7 +18,6 @@ def binary_hoi4_to_filestring(f):
         else:
             sections.append(text)
     raw_filestring = " ".join(sections)
-    with open("temp.hoi4", "w") as f: f.write(raw_filestring)
     return decorate(raw_filestring)
 
 
@@ -45,15 +44,10 @@ def get_text(f):
     elif number == 23:
         length = unpack("<H", f.read(2))[0]
         text = f.read(length).decode("utf-8")
-        for k, v in TOKENS.items():
-            if v == text:
-                if k == 3: return 1
-                if k == 4: return -1
     elif number == 359:
-        text = str(unpack('<q', f.read(8))[0])
-        
+        text = str(unpack("<q", f.read(8))[0])
     elif number == 668:
-        text = str(unpack('<Q', f.read(8))[0])
+        text = str(unpack("<Q", f.read(8))[0])
     else:
         text = TOKENS.get(number, f"UNKNOWN_TOKEN_{number}")
     return text

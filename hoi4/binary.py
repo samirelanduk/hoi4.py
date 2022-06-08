@@ -4,19 +4,11 @@ from struct import unpack
 from hoi4.data import TOKENS
 
 def parse_binary_hoi4(f):
-    depth = 0
     sections = []
     while True:
         text = get_text(f)
         if text is None: break
-        if text == 1:
-            depth += 1
-            sections.append("{\n" + depth * "  ")
-        elif text == -1:
-            depth -= 1
-            sections.append("\n" + depth * "  " + "}\n" + depth * "  ")
-        else:
-            sections.append(text)
+        sections.append(text)
     raw_filestring = " ".join(sections)
     return decorate(raw_filestring)
 
@@ -54,7 +46,7 @@ def get_text(f):
 
 
 def decorate(filestring):
-    for key in ["start_date", "date"]:
+    '''for key in ["start_date", "date"]:
         substitutions = []
         for m in re.finditer(f"{key} = (\\d+)", filestring):
             if int(m[1]) < 60000000: continue
@@ -67,7 +59,7 @@ def decorate(filestring):
             sections.append(filestring[end:sub[0]])
             sections.append(sub[2])
             end = sub[1]
-        filestring = "".join(sections)
+        filestring = "".join(sections)'''
 
     filestring = re.sub('"([a-zA-Z0-9_^]+)" =', r"\1 =", filestring)
     filestring = re.sub(' id = "(.+?)"', r" id = \1", filestring)

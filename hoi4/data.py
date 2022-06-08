@@ -6721,7 +6721,7 @@ TOKENS = {
     19475: "cache_random_setting",
     19476: "baptiste_token_233",
     19477: "log_checksum_members_setting",
-    19478: "baptiste_token_235",
+    19478: "character",
     19479: "baptiste_token_236",
     19480: "baptiste_token_237",
     19481: "baptiste_token_238",

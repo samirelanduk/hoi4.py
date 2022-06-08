@@ -22,6 +22,10 @@ def strip_down(text):
 
 
 def tokenize(text):
+    """Takes a stripped-down plain-text HOI4 filestring and returns a list of
+    tokens. Broadly, tokens are things separated by whitespace, but anything
+    enclosed by double quotes is considered a single token."""
+
     strings = list(re.finditer(r'".*?"', text))
     tokens = []
     end = 0
@@ -30,12 +34,11 @@ def tokenize(text):
         tokens.append(string[0][1:-1])
         end = string.end()
     tokens += text[end:].strip().split()
-    
     return tokens
 
 
 def find_closing_brace(tokens, start):
-    """Given a block of text and the location of an opening '{' within it, this
+    """Given a list of tokens and the location of an opening '{' within it, this
     function will return the position of the corresponding closing '}'."""
 
     assert tokens[start] == "{"
@@ -49,60 +52,25 @@ def find_closing_brace(tokens, start):
 
 
 def parse_tokens(tokens):
+    """Takes a list of tokens representing all or part of a HOI4 save file, and
+    turns it into a Python dictionary. When it encounters sections enclosed by
+    curly braces, it will call itself recursively on that section. If the tokens
+    represents an array of values rather than a mapping, it will return a list
+    instead."""
+
     if "=" not in tokens: return tokens
-    key = ""
-    d = {}
-    loc = 0
+    key, d, loc =  "", {}, 0
     while loc < len(tokens):
         token = tokens[loc]
-        if token == "=":
-            pass
-        elif token == "{":
+        if token == "{":
             end = find_closing_brace(tokens, loc)
             brace_section = tokens[loc + 1:end]
             d[key] = parse_tokens(brace_section)
             loc, key = end, ""
-        else:
-            if key:
-                d[key] = token
-                key = ""
-            else:
-                key = token
+        elif token != "=" and key:
+            d[key] = token
+            key = ""
+        elif token != "=":
+            key = token
         loc += 1
     return d
-
-
-
-def parse_text(text):
-    """Takes a block of text representing all or part of a HoI4 save file, and
-    turns it into a Python dictionary. When it encounters sections enclosed by
-    curly braces, it will call itself recursively on that section. If the text
-    represents an array of values rather than a mapping, it will return a list
-    instead."""
-
-    loc, word, key, in_string, d, l = 0, "", "", False, {}, []
-    list_mode = "=" not in text
-    while loc < len(text):
-        char = text[loc]
-        if char == '"':
-            in_string = not in_string
-        elif char == "=" and not in_string:
-            key = word.rstrip()
-            word = ""
-        elif char == " " and not in_string:
-            '''if list_mode and word: l.append(word)
-            if key and not list_mode: d[key] = word
-            word = ""'''
-        elif char == "{":
-            end = find_closing_brace(text, loc)
-            brace_section = text[loc + 1:end - 1]
-            if not list_mode: d[key] = parse_text(brace_section)
-            if list_mode: l.append(parse_text(brace_section))
-            loc, key, word = end, "", ""
-        else:
-            word += char
-        if loc == len(text) - 1 and (key or list_mode) and word:
-            if list_mode: l.append(word)
-            if not list_mode: d[key] = word
-        loc += 1
-    return l if list_mode else d

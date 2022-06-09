@@ -69,16 +69,30 @@ def parse_tokens(tokens):
             if list_mode:
                 l.append(parse_tokens(brace_section))
             else:
-                d[key] = parse_tokens(brace_section)
+                d[get_key_name(key, d)] = parse_tokens(brace_section)
             loc, key = end, ""
         elif token != "=":
             if list_mode:
                 l.append(token)
             else:
                 if key:
-                    d[key] = token
+                    d[get_key_name(key, d)] = token
                     key = ""
                 else:
                     key = token
         loc += 1
     return l if list_mode else d
+
+
+def get_key_name(key, dict):
+    """Takes a proposed key name and a dictionary it will be added to, and
+    checks to see if there is already a key of that name present. If there isn't
+    it just returns the ok key. If there is it generates a new, incremented
+    one."""
+    
+    if key not in dict: return key
+    n = 1
+    while True:
+        new_key = f"{key}__{n}"
+        if new_key not in dict: return new_key
+        n += 1

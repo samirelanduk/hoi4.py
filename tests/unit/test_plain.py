@@ -86,11 +86,23 @@ class EndBraceFindingTests(TestCase):
 
 class TokenParsingTests(TestCase):
 
+    def setUp(self):
+        self.patch1 = patch("hoi4.plain.get_key_name")
+        self.mock_key = self.patch1.start()
+        self.mock_key.side_effect = lambda k, d: k
+    
+
+    def tearDown(self):
+        self.patch1.stop()
+
+
     def test_can_parse_flat_structure(self):
         tokens = ["player", "=", "ENG", "ideology", "=", "dem", "X", "=", "Y"]
-        self.assertEqual(parse_tokens(tokens), {
-            "player": "ENG", "ideology": "dem", "X": "Y"
-        })
+        d = {"player": "ENG", "ideology": "dem", "X": "Y"}
+        self.assertEqual(parse_tokens(tokens), d)
+        self.mock_key.assert_any_call("player", d)
+        self.mock_key.assert_any_call("ideology", d)
+        self.mock_key.assert_any_call("X", d)
     
 
     def test_can_parse_lists_of_values_structure(self):
@@ -114,3 +126,16 @@ class TokenParsingTests(TestCase):
             "player": "ENG", "values": {"1": "2", "3": "4"}, "session": "658"
         })
         mock_find.assert_called_with(tokens, 5)
+
+
+
+class KeyNameTests(TestCase):
+
+    def test_can_get_key_back(self):
+        self.assertEqual(get_key_name("X", {}), "X")
+        self.assertEqual(get_key_name("X", {"Y": 1}), "X")
+    
+
+    def test_can_get_incremented_key(self):
+        self.assertEqual(get_key_name("X", {"X": 1}), "X__1")
+        self.assertEqual(get_key_name("X", {"X": 1, "X__1": 2}), "X__2")

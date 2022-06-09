@@ -99,6 +99,14 @@ class TokenParsingTests(TestCase):
     
 
     @patch("hoi4.plain.find_closing_brace")
+    def test_can_parse_lists_of_dicts_structure(self, mock_find):
+        mock_find.return_value = 5
+        tokens = ["xyz", "{", "x", "=", "y", "}", "abc"]
+        self.assertEqual(parse_tokens(tokens), ["xyz", {"x": "y"}, "abc"])
+        mock_find.assert_called_with(tokens, 1)
+    
+
+    @patch("hoi4.plain.find_closing_brace")
     def test_can_parse_text_with_braces_section(self, mock_find):
         tokens = 'player = ENG values = { 1 = 2 3 = 4 } session = 658'.split()
         mock_find.return_value = 12

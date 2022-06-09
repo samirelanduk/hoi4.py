@@ -59,18 +59,26 @@ def parse_tokens(tokens):
     instead."""
 
     if "=" not in tokens: return tokens
-    key, d, loc =  "", {}, 0
+    list_mode = len(tokens) > 2 and tokens[1] != "="
+    key, d, l, loc =  "", {}, [], 0
     while loc < len(tokens):
         token = tokens[loc]
         if token == "{":
             end = find_closing_brace(tokens, loc)
             brace_section = tokens[loc + 1:end]
-            d[key] = parse_tokens(brace_section)
+            if list_mode:
+                l.append(parse_tokens(brace_section))
+            else:
+                d[key] = parse_tokens(brace_section)
             loc, key = end, ""
-        elif token != "=" and key:
-            d[key] = token
-            key = ""
         elif token != "=":
-            key = token
+            if list_mode:
+                l.append(token)
+            else:
+                if key:
+                    d[key] = token
+                    key = ""
+                else:
+                    key = token
         loc += 1
-    return d
+    return l if list_mode else d

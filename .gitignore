@@ -3,7 +3,7 @@ __pycache__
 *.pyc
 *.hoi4
 !tests/integration/files/*.hoi4
-!tests/integration/files/*.json
 *.json
+!tests/integration/files/*.json
 tokens.py
 .DS_Store

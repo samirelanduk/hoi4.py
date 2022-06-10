@@ -20,6 +20,12 @@ class TextLoadingTests(TestCase):
 
 class DictLoadingTests(TestCase):
 
+    def test_can_load_binary_file_as_dict(self):
+        text = hoi4.load_as_dict(Path("tests/integration/files/Iraq.hoi4"))
+        with open(Path("tests/integration/files/Iraq.ref.json")) as f:
+            self.assertEqual(text, json.load(f))
+
+
     def test_can_load_plain_file_as_dict(self):
         text = hoi4.load_as_dict(Path("tests/integration/files/Iraq_plain.hoi4"))
         with open(Path("tests/integration/files/Iraq_plain.ref.json")) as f:

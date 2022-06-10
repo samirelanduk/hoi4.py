@@ -4,16 +4,24 @@ from struct import unpack
 from hoi4.data import TOKENS
 
 def parse_binary_hoi4(f):
+    """Takes an open file handler of a binary HOI4 (with the first 7 bytes
+    already read) and returns a plain text representation of the contents in
+    HOI4 format."""
+
     sections = []
     while True:
-        text = get_text(f)
+        text = get_token(f)
         if text is None: break
         sections.append(text)
     raw_filestring = " ".join(sections)
     return decorate(raw_filestring)
 
 
-def get_text(f):
+def get_token(f):
+    """Gets a single token as a string from a binary file. It will read the
+    first two bytes to determine what the current token type is, and then any
+    additional tokens required to fully parse the token."""
+
     bytes2 = f.read(2)
     if len(bytes2) != 2: return None
     number = unpack("<H", bytes2)[0]
@@ -46,7 +54,11 @@ def get_text(f):
 
 
 def decorate(filestring):
-    '''for key in ["start_date", "date"]:
+    """Takes the algorithmically generated plain text HOI4 filestring and
+    enhances it by creating string representations of dates and removing some
+    unneeded quote marks."""
+
+    for key in ["start_date", "date"]:
         substitutions = []
         for m in re.finditer(f"{key} = (\\d+)", filestring):
             if int(m[1]) < 60000000: continue
@@ -59,14 +71,18 @@ def decorate(filestring):
             sections.append(filestring[end:sub[0]])
             sections.append(sub[2])
             end = sub[1]
-        filestring = "".join(sections)'''
-
+        sections.append(filestring[end:])
+        filestring = "".join(sections)
     filestring = re.sub('"([a-zA-Z0-9_^]+)" =', r"\1 =", filestring)
     filestring = re.sub(' id = "(.+?)"', r" id = \1", filestring)
     return filestring
 
 
 def create_date(hours):
+    """Takes a HOI4 integer representation of a date and returns a HOI4 string
+    representation of a date. Leap years are handled by ignoring them, as HOI4
+    does."""
+
     delta = int(hours) - 60759371
     years = delta // (24 * 365)
     extra_hours = delta % (24 * 365)

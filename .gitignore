@@ -8,3 +8,5 @@ __pycache__
 tokens.py
 dates.py
 .DS_Store
+*.prof
+prof.py

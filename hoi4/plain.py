@@ -58,7 +58,6 @@ def parse_tokens(tokens):
     represents an array of values rather than a mapping, it will return a list
     instead."""
 
-    if "=" not in tokens: return tokens
     list_mode = len(tokens) > 2 and tokens[1] != "="
     key, d, l, loc =  "", {}, [], 0
     while loc < len(tokens):

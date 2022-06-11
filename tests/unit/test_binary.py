@@ -118,15 +118,15 @@ class DecorationTests(TestCase):
 
     @patch("hoi4.binary.create_date")
     def test_can_convert_dates(self, mock_date):
-        mock_date.side_effect = ["d1", "d2"]
-        filestring = "x = 1 date = 60000000 start_date = 70000000 date = 4 y = 1"
+        mock_date.side_effect = ["d1", "d2", "d3"]
+        filestring = "x = 1 date = 60000000 expire = 43808760 start_date = 70000000 date = 43808759 y = 1"
         self.assertEqual(
             decorate(filestring),
-            'x = 1 date = "d2" start_date = "d1" date = 4 y = 1'
+            'x = 1 date = "d1" expire = "d3" start_date = "d2" date = 43808759 y = 1'
         )
         mock_date.assert_any_call("70000000")
         mock_date.assert_any_call("60000000")
-        self.assertEqual(mock_date.call_count, 2)
+        self.assertEqual(mock_date.call_count, 3)
     
 
     def test_can_remove_quote_marks(self):
@@ -140,6 +140,7 @@ class DecorationTests(TestCase):
 class DateCreationTests(TestCase):
 
     def test_can_get_date(self):
+        self.assertEqual(create_date("43808760"), "1.1.1.1")
         self.assertEqual(create_date("60759371"), "1936.1.1.12")
         self.assertEqual(create_date("60760176"), "1936.2.4.1")
         self.assertEqual(create_date("60760584"), "1936.2.21.1")

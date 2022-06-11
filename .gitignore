@@ -6,4 +6,5 @@ __pycache__
 *.json
 !tests/integration/files/*.json
 tokens.py
+dates.py
 .DS_Store

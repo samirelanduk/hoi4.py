@@ -58,12 +58,12 @@ def decorate(filestring):
     enhances it by creating string representations of dates and removing some
     unneeded quote marks."""
 
-    for key in ["start_date", "date"]:
+    for key in ["date", "expire", "trade", "next_weather_change"]:
         substitutions = []
-        for m in re.finditer(f"{key} = (\\d+)", filestring):
-            if int(m[1]) < 60000000: continue
-            date = f'"{create_date(m[1])}"'
-            substitutions.append([m.start() + len(key) + 3, m.end(), date])
+        for m in re.finditer(f"([^\\s]*{key}[^\\s]*) = (\\d+)", filestring):
+            if int(m[2]) < 43808760: continue
+            date = f'"{create_date(m[2])}"'
+            substitutions.append([m.start() + len(m[1]) + 3, m.end(), date])
         sections = []
         end = 0
         while substitutions:
@@ -92,4 +92,6 @@ def create_date(hours):
         temp_dt.month, temp_dt.day, temp_dt.hour
     )
     delta = timedelta(hours=int(hours) - 60759371)
-    return datetime.strftime(dt, "%Y.%-m.%-d.%-H")
+    datestring = datetime.strftime(dt, "%Y.%-m.%-d.%-H")
+    while datestring[0] == "0": datestring = datestring[1:]
+    return datestring

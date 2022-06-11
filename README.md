@@ -1,8 +1,8 @@
 # hoi4.py
 
 [![](https://github.com/samirelanduk/hoi4.py/actions/workflows/main.yml/badge.svg)](https://github.com/samirelanduk/hoi4.py/actions/workflows/main.yml)
-[![](https://img.shields.io/pypi/pyversions/hoi4.svg?color=3776AB&logo=python&logoColor=white)](https://pypi.org/project/hoi4.py/0.1.0/)
-[![](https://img.shields.io/pypi/l/hoi4.svg?color=blue)](https://github.com/samirelanduk/hoi4.py/blob/master/LICENSE)
+[![](https://img.shields.io/pypi/pyversions/hoi4.py.svg?color=3776AB&logo=python&logoColor=white)](https://pypi.org/project/hoi4.py/0.1.0/)
+[![](https://img.shields.io/pypi/l/hoi4.py.svg?color=blue)](https://github.com/samirelanduk/hoi4.py/blob/master/LICENSE)
 
 hoi4.py is a Python library for parsing HOI4 save files (whether binary or
 plain text) and for plotting useful information from them.

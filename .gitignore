@@ -1,5 +1,8 @@
 watch.py
 __pycache__
+*.egg-info/
+build/
+dist/
 *.pyc
 *.hoi4
 !tests/integration/files/*.hoi4

@@ -13,6 +13,7 @@ def filestring_to_dict(filestring):
 
 def strip_down(text):
     """Removes line breaks, and reduces all consecutive spaces to a single
+    e.g.: "hoi4\na = b\n    c  = d e={  f g h}   " -> "hoi4 a = b c = d e = { f g h }" 
     space."""
 
     no_line_breaks = text.replace("\n", " ")
@@ -24,16 +25,22 @@ def strip_down(text):
 def tokenize(text):
     """Takes a stripped-down plain-text HOI4 filestring and returns a list of
     tokens. Broadly, tokens are things separated by whitespace, but anything
-    enclosed by double quotes is considered a single token."""
+    enclosed by double quotes is considered a single token.
+    e.g.:
+    HOI4txt player = "GER" ideology = fascism
+    to
+    ['HOI4txt', 'player', '=', 'GER', 'ideology', '=', 'fascism']
+    """
 
     strings = list(re.finditer(r'".*?"', text))
     tokens = []
     end = 0
     for string in strings:
-        tokens += text[end:string.start()].strip().split()
+        tokens += text[end:string.start()].strip().split() #split and add the token before the string
         tokens.append(string[0][1:-1])
         end = string.end()
     tokens += text[end:].strip().split()
+    pass
     return tokens
 
 
